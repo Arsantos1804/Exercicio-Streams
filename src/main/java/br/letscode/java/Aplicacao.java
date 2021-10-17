@@ -1,5 +1,7 @@
 package br.letscode.java;
 
+
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,33 +25,29 @@ public class Aplicacao {
 
         Aplicacao app = new Aplicacao();
 
-        app.testeLeituraArquivoMale();
-        app.testeLeituraArquivoFemale();
+        app.LeituraArquivoMale();
+        app.LeituraArquivoFemale();
         app.getAtorMaisJovem();
         app.getAtrizMaisPremiada();
         app.recebeuMaisDeUmOscar();
         app.maisVezesVencedora();
-        app.resumoQuantosPremiosMale();
+        app.resumoQuantosPremios("Leonardo DiCaprio");
+        app.resumoQuantosPremios("Jane Fonda");
 
 
     }
 
-    private void getAtorMaisJovem()  {
+     private void getAtorMaisJovem()  {
 
 
         System.out.println("O ator mais jovem a ganhar o oscar: ");
-        String filepath = getFilepathFromResourceAsStream("oscar_age_male.csv");
-        try(Stream <String> lines = Files.lines(Path.of(filepath))){
-            lines
-                    .skip(1)
-                    .map(Oscar::fromLine)
-                    .min(Comparator.comparingInt(Oscar::getAge))
-                    .ifPresent(System.out::println);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+                this.ator.stream()
+                .min(Comparator.comparingInt(Oscar ::getAge))
+                .ifPresent(System.out::println);
     }
     private void getAtrizMaisPremiada() {
+
+
         System.out.println("A atriz mais premiada: ");
 
         Map<String, Long> nome = this.atriz.stream()
@@ -61,6 +59,8 @@ public class Aplicacao {
 
     }
     private void recebeuMaisDeUmOscar (){
+
+
         System.out.println("Os atores/atrizes que receberam mais de um Oscar: ");
         System.out.println("Atrizes: ");
         Map<String, Long> nomeAtriz = this.atriz.stream()
@@ -80,7 +80,33 @@ public class Aplicacao {
 
 
 
-    private void testeLeituraArquivoMale()  {
+       private void maisVezesVencedora() {
+
+
+        System.out.println( );
+        Map<String, Long> vencedora = this.atriz.stream()
+                .filter(a -> a.getAge() > 20 && a.getAge()<30)
+                .map(Oscar :: getName)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        vencedora.entrySet().stream()
+                .max(Comparator.comparingLong(Map.Entry::getValue))
+                .ifPresent((m -> System.out.println("A atriz entre 20 e 30 anos que mais vezes venceu:" + m.getKey() )));
+    }
+
+    private void resumoQuantosPremios(String name){
+
+
+        System.out.println("Resumo de Prêmios");
+        this.ator.stream()
+                .filter(m -> Objects.equals(m.getName(), name))
+                .forEach(System.out::println);
+        this.atriz.stream()
+                .filter(m -> Objects.equals(m.getName(), name))
+                .forEach(System.out::println);
+    }
+    private void LeituraArquivoMale()  {
+
+
         String filepath = getFilepathFromResourceAsStream("oscar_age_male.csv");
         try(Stream <String> lines = Files.lines(Path.of(filepath))){
             this.ator = lines.skip(1)
@@ -91,18 +117,10 @@ public class Aplicacao {
         }
 
     }
-    private void maisVezesVencedora() {
-        System.out.println("A atriz entre 20 e 30 anos que mais vezes venceu:" );
-        Map<String, Long> vencedora = this.atriz.stream()
-                .filter(a -> a.getAge() > 20 && a.getAge()<30)
-                .map(Oscar :: getName)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        vencedora.entrySet().stream()
-                .max(Comparator.comparingLong(Map.Entry::getValue)).
-                ifPresent((m -> System.out.println(m.getKey() + "é uma atriz ")));
-    }
+    private void LeituraArquivoFemale()  {
 
-    private void testeLeituraArquivoFemale()  {
+
+
         String filepath = getFilepathFromResourceAsStream("oscar_age_female.csv");
         try(Stream<String> lines = Files.lines(Path.of(filepath))){
             this.atriz = lines.skip(1)
@@ -113,15 +131,9 @@ public class Aplicacao {
         }
     }
 
-    private void resumoQuantosPremiosMale(String name){
-        System.out.println("A atriz" + name);
-        this.ator.stream()
-                .filter(m -> Objects.equals(m.getName(), name))
-                .forEach(System.out::println);
-    }
-
-
     private String getFilepathFromResourceAsStream(String fileName) {
+
+
         URL url = getClass().getClassLoader().getResource(fileName);
         File file = new File(url.getFile());
         return file.getPath();
