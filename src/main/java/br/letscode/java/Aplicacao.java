@@ -28,6 +28,8 @@ public class Aplicacao {
         app.getAtorMaisJovem();
         app.getAtrizMaisPremiada();
         app.recebeuMaisDeUmOscar();
+        app.maisVezesVencedora();
+        app.resumoQuantosPremiosMale();
 
 
     }
@@ -100,7 +102,7 @@ public class Aplicacao {
                 ifPresent((m -> System.out.println(m.getKey() + "é uma atriz ")));
     }
 
-        private void testeLeituraArquivoFemale()  {
+    private void testeLeituraArquivoFemale()  {
         String filepath = getFilepathFromResourceAsStream("oscar_age_female.csv");
         try(Stream<String> lines = Files.lines(Path.of(filepath))){
             this.atriz = lines.skip(1)
